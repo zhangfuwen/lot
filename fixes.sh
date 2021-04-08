@@ -1,8 +1,8 @@
 function fix_mounts()
 {
     cat >> /etc/fstab << EOF
-    devpts           /dev/pts              devpts  gid=5,mode=620,newinstance  0 0
-    sys  /sys sysfs rw,nosuid,nodev,noexec,relatime
+devpts           /dev/pts              devpts  gid=5,mode=620,newinstance  0 0
+sys  /sys sysfs rw,nosuid,nodev,noexec,relatime
 EOF
     mount /sys
     mount /dev
