@@ -1,0 +1,76 @@
+583  vi bash/env_setup.sh 
+  584  source bash/env_setup.sh 
+  585  if [[ ! $(type log_i) ]];then echo "no such function"; else echo "yes, we have"; fi
+  586  if [[ ! $(type log_x) ]];then echo "no such function"; else echo "yes, we have"; fi
+  587  if [[ ! $(type log_x &>/dev/null) ]];then echo "no such function"; else echo "yes, we have"; fi
+  588  apt-get -qq install lxde 
+  589  apt-get -qqq install lxde 
+  590  /system/sbin/busybox useradd pulse
+  591  /system/sbin/busybox adduser pulse
+  592* apt-get -
+  593  /system/sbin/busybox groupadd lightdm
+  594  /system/sbin/busybox addgroup lightdm
+  595  apt-get -qqq install lxde 
+  596  /system/sbin/busybox addgroup geoclue
+  597  apt-get -qqq install lxde 
+  598  mount /dev/pts
+  599  apt-get -qqq install lxde 
+  600  /system/sbin/busybox adduser _apt
+  601  apt-get -qqq install lxde 
+  602  dpkg reconfigure wicd-daemon
+  603  dpkg --reconfigure wicd-daemon
+  604  dpkg-reconfigure wicd-daemon
+  605  apt-get --fix-broken install
+  606  which adduser
+  607  ls -lh /usr/sbin/adduser 
+  608  ls -lh /usr/sbin/addgroup 
+  609  tail -f /var/log/lastlog 
+  610  ps -ef | grep dbus
+  611  cat /usr/share/defaults/at-spi2/accessibility.conf 
+  612  wicls
+  613  ls
+  614  ls /var/run/dbus
+  615  ls /var/run/
+  616  find /etc/ -name "dbus"
+  617  vi /etc/default/dbus 
+  618  vi /etc/init.d/dbus 
+  619  ln -s /etc/init.d/dbus /var/service
+  620  /etc/init.d/dbus 
+  621  /etc/init.d/dbus start
+  622  /system/sbin/busybox addgroup messagebus
+  623  /etc/init.d/dbus start
+  624  /system/sbin/busybox adduser messagebus
+  625  /system/sbin/busybox adduser systemd-resolve
+  626  /system/sbin/busybox adduser --help
+  627  /system/sbin/busybox adduser -D -H systemd-timesync
+  628  /system/sbin/busybox adduser -D -H geoclue
+  629  /system/sbin/busybox adduser -D -H netdev
+  630  /system/sbin/busybox adduser -D -H avahi
+  631  /system/sbin/busybox adduser -D -H rtkit
+  632  /etc/init.d/dbus start
+  633  /system/sbin/busybox addgroup netdev
+  634  /etc/init.d/dbus start
+  635  /system/sbin/busybox adduser geoclue
+  636  /system/sbin/busybox delgroup geoclue
+  637  /system/sbin/busybox adduser geoclue
+  638  /etc/init.d/dbus start
+  639  /system/sbin/busybox adduser -D -H systemd-network
+  640  /etc/init.d/dbus start
+  641  id
+  642  vi /etc/passwd
+  643  vi /etc/group
+  644  /system/sbin/busybox delgroup messagebus
+  645  /system/sbin/busybox delgroup _apt
+  646  /system/sbin/busybox deluser _apt
+  647  /system/sbin/busybox delgroup messagebus
+  648  /system/sbin/busybox adduser messagebus
+  649  /system/sbin/busybox adduser -D -H messagebus
+  650  /system/sbin/busybox adduser -D -H _apt
+  651  /system/sbin/busybox adduser -D -H _apt --force-badname
+  652  /system/sbin/busybox adduser -D -H  --force-badname _apt
+  653  /system/sbin/busybox adduser  _apt
+  654  /system/sbin/busybox addgroup _apt
+  655  /etc/init.d/dbus start
+
+
+chmod +s /usr/lib/dbus-1.0/dbus-daemon-launch-helper

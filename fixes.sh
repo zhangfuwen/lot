@@ -7,15 +7,32 @@ EOF
     mount /sys
     mount /dev
     mount /dev/pts
+    mv /usr/sbin/adduser{,.bak}
+    mv /usr/sbin/addgroup{,.bak}
+    mv /usr/sbin/deluser{,.bak}
+    mv /usr/sbin/delgroup{,.bak}
+    ln -s /system/sbin/busybox /usr/sbin/adduser
+    ln -s /system/sbin/busybox /usr/sbin/addgroup
+    ln -s /system/sbin/busybox /usr/sbin/deluser
+    ln -s /system/sbin/busybox /usr/sbin/delgroup
 }
 
 function fix_dns()
 {
-    cat >> /etc/resolv.conf << EOF
+    if [[ -f /etc/resolv.conf ]];then
+        prepend_txt="nameserver 10.91.0.1
+nameserver 8.8.8.8
+nameserver 8.8.4.4"
+        original_txt=$(cat /etc/resolv.conf)
+        echo "$prepend_txt" > /etc/resolv.conf
+        echo "$original_txt" >> /etc/resolv.conf
+    else
+        cat >> /etc/resolv.conf << EOF
 nameserver 10.91.0.1
 nameserver 8.8.8.8
 nameserver 8.8.4.4
 EOF
+    fi
 
 }
 
@@ -69,4 +86,11 @@ function fix_users()
 # 3006(net_bw_stats)
 # 3009(readproc)
 # 3,011(uhid) context=u:r:su:s0
+}
+
+function fix_all()
+{
+    fix_dns
+    fix_mounts
+    fix_users
 }
