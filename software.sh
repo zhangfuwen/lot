@@ -10,6 +10,12 @@ else
     my_log=log_i
 fi
 
+function pkg_installed()
+{
+    pkg_name=$1
+    dpkg -s $pkg_name 2>/dev/null | grep "Status: install ok installed" &>/dev/null
+}
+
 function install_qtcreator()
 {
     apt-get -qq install -y qt5-default qt5-doc qtbase5-examples qtbase5-doc-html qtcreator build-essential qtbase5-dev qtbase5-gles-dev
@@ -17,7 +23,7 @@ function install_qtcreator()
 
 function install_ime()
 {
-    if [[ ! $(dpkg -l fcitx &>/dev/null) ]]; then
+    if [[ ! $(pkg_installed fcitx) ]]; then
         $SUDO apt-get -qq install -y fcitx fcitx-table-wbpy
     fi
     cat >> ~/.xprofile << EOF
@@ -54,7 +60,7 @@ function install_from_mirror()
 {
     local pkg_name=$1
     $my_log "installing $pkg_name"
-    $SUDO dpkg -l $pkg_name &>/dev/null || $SUDO apt-get -qq install -y $pkg_name
+    pkg_installed $pkg_name || $SUDO apt-get -qq install -y $pkg_name
 }
 
 function install_deb_from_url()
@@ -67,22 +73,22 @@ function install_deb_from_url()
     fi
     UUID=$(cat /proc/sys/kernel/random/uuid)
     wget -O /tmp/$UUID.deb $url
-    $SUDO time dpkg -i /tmp/$UUID.deb
+    $SUDO dpkg -i /tmp/$UUID.deb
 }
 
 function install_wps()
 {
-    $SUDO dpkg -l wps-office &>/dev/null || install_deb_from_url $wps_url
+    pkg_installed "wps-office" || install_deb_from_url $wps_url
 }
 
 function install_yozo()
 {
-    $SUDO dpkg -l yozo-office &>/dev/null || install_deb_from_url $yozo_url
+    pkg_installed "yozo-office" || install_deb_from_url $yozo_url
 }
 
 function install_vscode()
 {
-    $SUDO dpkg -l code &>/dev/null || install_deb_from_url $vscode_url
+    pkg_installed "code" || install_deb_from_url $vscode_url
 }
 
 function install_firefox()
