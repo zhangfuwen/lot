@@ -51,14 +51,14 @@ function install_xfce()
 function install_from_mirror()
 {
     local pkg_name=$1
-    my_log "installing $pkg_name"
+    $my_log "installing $pkg_name"
     $SUDO dpkg -l $pkg_name &>/dev/null || $SUDO apt-get -qq install -y $pkg_name
 }
 
 function install_deb_from_url()
 {
     local url=$1
-    my_log "installing from $url"
+    $my_log "installing from $url"
     if [[ ! $(command -v wget) ]]; then
         "echo wget is not installed, installing"
         $SUDO apt-get install -y wget apt 
