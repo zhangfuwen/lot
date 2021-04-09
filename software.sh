@@ -65,7 +65,7 @@ function install_deb_from_url()
     fi
     UUID=$(cat /proc/sys/kernel/random/uuid)
     wget -O /tmp/$UUID.deb $url
-    $SUDO dpkg -i /tmp/$UUID.deb
+    $SUDO time dpkg -i /tmp/$UUID.deb
 }
 
 function install_wps()

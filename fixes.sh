@@ -35,6 +35,25 @@ EOF
     fi
 
 }
+function fix_apt_users()
+{
+    /system/sbin/busybox adduser -D -H pulse
+    /system/sbin/busybox addgroup lightdm
+    /system/sbin/busybox adduser -D -H systemd-resolve
+    /system/sbin/busybox adduser -D -H systemd-timesync
+    /system/sbin/busybox adduser -D -H geoclue
+    /system/sbin/busybox adduser -D -H netdev
+    /system/sbin/busybox adduser -D -H avahi
+    /system/sbin/busybox adduser -D -H rtkit
+    /system/sbin/busybox addgroup netdev
+    /system/sbin/busybox adduser -D -H systemd-network
+    /system/sbin/busybox adduser -D -H messagebus
+    chmod +s /usr/lib/dbus-1.0/dbus-daemon-launch-helper
+    ln -s /etc/init.d/dbus /var/service
+    /etc/init.d/dbus start
+    echo 'APT::Sandbox::User "u0_a207";' > /etc/apt/apt.conf.d/90sandbox
+}
+
 
 function fix_users()
 {
@@ -51,6 +70,7 @@ function fix_users()
     /system/sbin/busybox addgroup -g 1007 log
 
     /system/sbin/busybox adduser -u 10207 -s /bin/bash u0_a207
+    /system/sbin/busybox adduser -D -H _apt
 
     /system/sbin/busybox adduser u0_a207 readproc
     /system/sbin/busybox adduser u0_a207 uhid
@@ -73,6 +93,7 @@ function fix_users()
     /system/sbin/busybox adduser root sdcard_rw
     /system/sbin/busybox adduser root sdcard_r
     /system/sbin/busybox adduser root adb
+
 
 # uid=0(root) gid=0(root) groups=0(root),
 # 1004(input),
