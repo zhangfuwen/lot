@@ -12,12 +12,14 @@ fi
 
 function install_qtcreator()
 {
-    apt-get install qt5-default qt5-doc qtbase5-examples qtbase5-doc-html qtcreator build-essential qtbase5-dev qtbase5-gles-dev
+    apt-get -qq install -y qt5-default qt5-doc qtbase5-examples qtbase5-doc-html qtcreator build-essential qtbase5-dev qtbase5-gles-dev
 }
 
 function install_ime()
 {
-    $SUDO apt install fcitx fcitx-table-wbpy
+    if [[ ! $(dpkg -l fcitx &>/dev/null) ]]; then
+        $SUDO apt-get -qq install -y fcitx fcitx-table-wbpy
+    fi
     cat >> ~/.xprofile << EOF
 export GTK_IM_MODULE=fcitx
 export QT_IM_MODULE=fcitx
@@ -33,19 +35,19 @@ EOF
 
 function install_nettools()
 {
-    $SUDO apt-get install -y iputils-ping iproute2
+    $SUDO apt-get -qq install -y iputils-ping iproute2
     alias ifconfig='ip -c a'
     echo "alias ifconfig='ip -c a'" >> ~/.bashrc
 }
 
 function install_lxde()
 {
-    $SUDO apt-get install -y lxde
+    $SUDO apt-get -qq install -y lxde
 }
 
 function install_xfce()
 {
-    $SUDO apt-get install -y xfce
+    $SUDO apt-get -qq install -y xfce
 }
 
 function install_from_mirror()
@@ -90,16 +92,20 @@ function install_firefox()
 
 function install_all()
 {
+
+    list="tightvncserver lxde firefox-esr"
+    for sw in $list; do
+        install_from_mirror $sw
+    done
+
+    install_ime
+    install_nettools
+
     list="wps
     yozo
     vscode"
     for sw in $list; do
         install_$sw
-    done
-
-    list="tightvncserver lxde firefox-esr"
-    for sw in $list; do
-        install_from_mirror $sw
     done
 
 }

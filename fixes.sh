@@ -7,14 +7,14 @@ EOF
     mount /sys
     mount /dev
     mount /dev/pts
-    mv /usr/sbin/adduser{,.bak}
-    mv /usr/sbin/addgroup{,.bak}
-    mv /usr/sbin/deluser{,.bak}
-    mv /usr/sbin/delgroup{,.bak}
-    ln -s /system/sbin/busybox /usr/sbin/adduser
-    ln -s /system/sbin/busybox /usr/sbin/addgroup
-    ln -s /system/sbin/busybox /usr/sbin/deluser
-    ln -s /system/sbin/busybox /usr/sbin/delgroup
+#    mv /usr/sbin/adduser{,.bak}
+#    mv /usr/sbin/addgroup{,.bak}
+#    mv /usr/sbin/deluser{,.bak}
+#    mv /usr/sbin/delgroup{,.bak}
+#    ln -s /system/sbin/busybox /usr/sbin/adduser
+#    ln -s /system/sbin/busybox /usr/sbin/addgroup
+#    ln -s /system/sbin/busybox /usr/sbin/deluser
+#    ln -s /system/sbin/busybox /usr/sbin/delgroup
 }
 
 function fix_dns()
@@ -47,11 +47,11 @@ function fix_apt_users()
     /system/sbin/busybox adduser -D -H rtkit
     /system/sbin/busybox addgroup netdev
     /system/sbin/busybox adduser -D -H systemd-network
-    /system/sbin/busybox adduser -D -H messagebus
+    /system/sbin/busybox adduser -D -H -S messagebus
     chmod +s /usr/lib/dbus-1.0/dbus-daemon-launch-helper
     ln -s /etc/init.d/dbus /var/service
     /etc/init.d/dbus start
-    echo 'APT::Sandbox::User "u0_a207";' > /etc/apt/apt.conf.d/90sandbox
+#    echo 'APT::Sandbox::User "u0_a207";' > /etc/apt/apt.conf.d/90sandbox
 }
 
 
