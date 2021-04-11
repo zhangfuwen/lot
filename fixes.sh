@@ -39,14 +39,14 @@ function fix_apt_users()
 {
     /system/sbin/busybox adduser -D -H pulse
     /system/sbin/busybox addgroup lightdm
-    /system/sbin/busybox adduser -D -H systemd-resolve
-    /system/sbin/busybox adduser -D -H systemd-timesync
-    /system/sbin/busybox adduser -D -H geoclue
-    /system/sbin/busybox adduser -D -H netdev
-    /system/sbin/busybox adduser -D -H avahi
-    /system/sbin/busybox adduser -D -H rtkit
+    /system/sbin/busybox adduser -D -H -S systemd-resolve
+    /system/sbin/busybox adduser -D -H -S systemd-timesync
+    /system/sbin/busybox adduser -D -H -S geoclue
+    /system/sbin/busybox adduser -D -H -S netdev
+    /system/sbin/busybox adduser -D -H -S avahi
+    /system/sbin/busybox adduser -D -H -S rtkit
     /system/sbin/busybox addgroup netdev
-    /system/sbin/busybox adduser -D -H systemd-network
+    /system/sbin/busybox adduser -D -H -S systemd-network
     /system/sbin/busybox adduser -D -H -S messagebus
     chmod +s /usr/lib/dbus-1.0/dbus-daemon-launch-helper
     ln -s /etc/init.d/dbus /var/service
