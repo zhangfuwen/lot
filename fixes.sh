@@ -70,7 +70,7 @@ function fix_users()
     /system/sbin/busybox addgroup -g 1007 log
 
     /system/sbin/busybox adduser -u 10207 -s /bin/bash u0_a207
-    /system/sbin/busybox adduser -D -H _apt
+#    /system/sbin/busybox adduser -D -H _apt
 
     /system/sbin/busybox adduser u0_a207 readproc
     /system/sbin/busybox adduser u0_a207 uhid
