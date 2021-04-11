@@ -99,12 +99,15 @@ function install_firefox()
 function install_all()
 {
 
-    list="tightvncserver lxde firefox-esr"
+    apt update
+    dpkg --configure -a
+    apt --fix-broken install
+
+    list="lxde firefox-esr"
     for sw in $list; do
         install_from_mirror $sw
     done
 
-    install_ime
     install_nettools
 
     list="wps
@@ -113,5 +116,8 @@ function install_all()
     for sw in $list; do
         install_$sw
     done
+	
+    install_ime
+    #install_from_mirror tightvncserver
 
 }

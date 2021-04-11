@@ -36,7 +36,7 @@ function sys_start()
     safe_bind_mount /storage/emulated/0/ $(pwd)/root-fs/root/Storage
     safe_bind_mount /storage/emulated/0/Download $(pwd)/root-fs/root/Downloads
     safe_bind_mount /storage/emulated/0/Pictures $(pwd)/root-fs/root/Pictures
-    safe_bind_mount $(pwd) "$(pwd)/root-fs$(pwd)"
+    safe_bind_mount $(pwd)/root-fs "$(pwd)/root-fs$(pwd)/root-fs"
     safe_bind_mount /data/data/com.termux/files/home/uoa $(pwd)/root-fs/root/uoa
     safe_bind_mount /system/bin $(pwd)/root-fs/system/bin
     safe_bind_mount /system/xbin $(pwd)/root-fs/system/xbin
@@ -70,7 +70,7 @@ function sys_stop()
     umount $(pwd)/root-fs/proc
     umount $(pwd)/root-fs/sys
     umount $(pwd)/root-fs/dev/pts
-    umount $(pwd)/root-fs/$(pwd)
+    umount $(pwd)/root-fs/$(pwd)/root-fs
     umount $(pwd)/root-fs/root/uoa
     umount $(pwd)/root-fs/dev
     umount $(pwd)/root-fs/root/Storage
