@@ -114,4 +114,5 @@ function fix_all()
     fix_dns
     fix_mounts
     fix_users
+    fix_apt_users
 }
