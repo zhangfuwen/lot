@@ -26,6 +26,11 @@ function safe_bind_mount()
 
 function sys_start()
 {
+    if [[ $# != 0 ]]; then
+        chroot=$1
+    else 
+        chroot="chroot"
+    fi
     #cd $(dirname $0)
     # unset LD_PRELOAD in case termux-exec is installed
     unset LD_PRELOAD
@@ -46,7 +51,7 @@ function sys_start()
     #command+=" -b /data/data/com.termux/files/home:/root"
     ## uncomment the following line to mount /sdcard directly to /
     #command+=" -b /sdcard"
-    command="chroot $(pwd)/root-fs "
+    command="$chroot $(pwd)/root-fs "
     command+=" /usr/bin/env -i"
     command+=" HOME=/root"
     command+=" USER=root"
