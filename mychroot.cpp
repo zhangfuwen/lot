@@ -35,7 +35,8 @@ int run_bash(void * args)
   char *arg4 = "PATH=/usr/local/sbin:/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin:/usr/games:/usr/local/games";
   char *arg5 = "TERM=xtterm-256color";
   char *arg6 = "LANG=C.UTF-8";
-  char *arg7 = "/bin/bash --login";
+  char *arg7 = "/usr/bin/bash";
+  char *arg8 = "--login";
   execl(binaryPath, binaryPath, 
           arg1, 
           arg2, 
@@ -44,5 +45,6 @@ int run_bash(void * args)
           arg5,
           arg6,
           arg7,
+          arg8,
           NULL);
 }
