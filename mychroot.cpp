@@ -33,7 +33,7 @@ int run_bash(void * args)
   char *arg2 = "HOME=/root";
   char *arg3 = "USER=root";
   char *arg4 = "PATH=/usr/local/sbin:/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin:/usr/games:/usr/local/games";
-  char *arg5 = "TERM=xtterm-256color";
+  char *arg5 = "TERM=xterm-256color";
   char *arg6 = "LANG=C.UTF-8";
   char *arg7 = "/usr/bin/bash";
   char *arg8 = "--login";
