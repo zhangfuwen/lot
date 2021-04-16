@@ -67,6 +67,40 @@ function sys_start()
     fi
 }
 
+function sys_start_lxc()
+{
+    unset LD_PRELOAD
+
+    safe_bind_mount /sys $(pwd)/root-fs/sys
+    safe_bind_mount /storage/emulated/0/ $(pwd)/root-fs/root/Storage
+    safe_bind_mount /storage/emulated/0/Download $(pwd)/root-fs/root/Downloads
+    safe_bind_mount /storage/emulated/0/Pictures $(pwd)/root-fs/root/Pictures
+    safe_bind_mount $(pwd)/root-fs "$(pwd)/root-fs$(pwd)/root-fs"
+    safe_bind_mount /data/data/com.termux/files/home/uoa $(pwd)/root-fs/root/uoa
+    safe_bind_mount /system/bin $(pwd)/root-fs/system/bin
+    safe_bind_mount /system/xbin $(pwd)/root-fs/system/xbin
+    safe_bind_mount /sbin $(pwd)/root-fs/system/sbin
+
+    ## uncomment the following line to have access to the home directory of termux
+    #command+=" -b /data/data/com.termux/files/home:/root"
+    ## uncomment the following line to mount /sdcard directly to /
+    #command+=" -b /sdcard"
+    command="$chroot $(pwd)/root-fs "
+    command+=" /usr/bin/env -i"
+    command+=" HOME=/root"
+    command+=" USER=root"
+    command+=" PATH=/usr/local/sbin:/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin:/usr/games:/usr/local/games"
+    command+=" TERM=$TERM"
+    command+=" LANG=C.UTF-8"
+    command+=" /bin/bash --login"
+    com="$@"
+    if [ -z "$1" ];then
+        exec $command
+    else
+        $command -c "$com"
+    fi
+}
+
 function sys_stop()
 {
     umount $(pwd)/root-fs/system/xbin
@@ -83,35 +117,26 @@ function sys_stop()
     umount $(pwd)/root-fs/root/Pictures
 }
 
-op=nothing
+if [[ $# == 1]]; then
+    # has opts
+    case $1 in
+    start ) op=start;;
+    stop ) op=stop;;
+    *) ;;
+    esac
+    echo "Selected command: $op"
+    echo "Selected number: $REPLY"
 
-
-# no opts
-if [[ $# == 0 ]]; then
-    PS3="command: "
-    select op in start, stop, nothing 
-    do
-        break
-    done
+    if [[ "$op" = "start" ]]; then
+        sys_start
+        exit 0
+    fi    
+    if [[ "$op" = "stop" ]]; then
+        sys_stop
+        exit 0
+    fi    
+    exit 0
 fi
 
-# has opts
-case $1 in
-start ) op=start;;
-stop ) op=stop;;
-*) ;;
-esac
 
 
-echo "Selected command: $op"
-echo "Selected number: $REPLY"
-
-if [[ "$op" = "start" ]]; then
-    sys_start
-    exit 0
-fi    
-if [[ "$op" = "stop" ]]; then
-    sys_stop
-    exit 0
-fi    
-exit 0
