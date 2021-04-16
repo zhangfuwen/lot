@@ -75,7 +75,7 @@ function sys_start_lxc()
     safe_bind_mount /storage/emulated/0/ $(pwd)/root-fs/root/Storage
     safe_bind_mount /storage/emulated/0/Download $(pwd)/root-fs/root/Downloads
     safe_bind_mount /storage/emulated/0/Pictures $(pwd)/root-fs/root/Pictures
-    safe_bind_mount $(pwd)/root-fs "$(pwd)/root-fs$(pwd)/root-fs"
+    safe_bind_mount ./root-fs "$(pwd)/root-fs$(pwd)/root-fs"
     safe_bind_mount /data/data/com.termux/files/home/uoa $(pwd)/root-fs/root/uoa
     safe_bind_mount /system/bin $(pwd)/root-fs/system/bin
     safe_bind_mount /system/xbin $(pwd)/root-fs/system/xbin
