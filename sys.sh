@@ -1,13 +1,105 @@
-#!/data/data/com.termux/files/usr/bin/bash
+#!/system/bin/sh
+cur_shell=$(basename $(readlink /proc/$$/exe))
+
+if [[ $cur_shell == "bash" ]]; then
+    script_dir=$(dirname $(realpath $BASH_SOURCE))
+else
+    script_dir=$(dirname $(realpath $_))
+fi
+source $script_dir/lib.sh
+
+log_level=$log_level_debug
+log_d "cur_shell $cur_shell"
+log_d "script_dir $script_dir"
+
+function is_not_mountpoint()
+{
+    dir=$1
+    if mountpoint $dir 2>&1 | grep "is not a mountpoint" > /dev/null; then
+        return 0
+    fi
+    return 1
+}
+
+function has_bad_mount()
+{
+    mountpoint_dir=$1
+    if mountpoint $mountpoint_dir 2>&1 | grep "Transport"; then
+        return 0;
+    else
+        return 1;
+    fi
+}
+
+function has_good_mount()
+{
+    mountpoint_dir=$1
+    if mountpoint -q $mountpoint_dir; then
+        return 0;
+    else
+        return 1;
+    fi
+}
+
+function safe_umount()
+{
+    dir=$1
+    printf "umount $dir... "
+    if has_bad_mount $dir; then
+	if /sbin/busybox umount -l $dir; then
+            printf "$(style green 'umounted bad mountpoint')\n"
+        else
+	    errno=$?
+	    printf "$(style red 'failed to umount bad mountpoint,%d')\n" $errno
+	    return $errno
+	fi
+    fi
+
+    if [[ ! -d $dir ]]; then
+	printf "$(style red 'error, not a dir')\n"
+	return 1
+    fi
+
+    if is_not_mountpoint $dir; then
+        printf "$(style red 'is not mountpoint, skipping')\n"
+	return 0
+    fi
+
+    if has_good_mount $dir; then
+	if /sbin/busybox umount -l $dir; then
+            printf "$(style green 'umounted')\n"
+	    return 0
+        else
+	    errno=$?
+	    printf "$(style red 'failed to umount %d')\n" $errno
+	    return $errno
+	fi
+    fi
+
+    if has_bad_mount $dir; then
+	if /sbin/busybox umount -l $dir; then
+            printf "$(style green 'umounted bad mountpoint')\n"
+        else
+	    errno=$?
+	    printf "$(style red 'failed to umount bad mountpoint,%d')\n" $errno
+	    return $errno
+	fi
+    fi
+
+    printf "$(style red 'unknown error, do know what happenedd.')\n"
+
+}
 
 function safe_bind_mount()
 {
     src=$1
     dst=$2
 
-    umount $dst
+    if has_good_mount $dst || has_bad_mount $dst; then
+	    safe_umount $dst
+    fi
 
-    printf "mounting $src to $dst\n"
+    printf "mounting $src to $dst..."
     if [[ ! -d $src ]]; then
         printf "\terror: source dir $src does not exist, skipping\n"
         return
@@ -15,16 +107,13 @@ function safe_bind_mount()
     if [[ ! -d $dst ]]; then
         printf "\tinfo: destination dir $dst does not exist, creating\n"
         mkdir -p $dst
-        printf "\tdone\n"
+	printf "\t$(style green 'done')\n"
     fi
 
-    if [[ $(mountpoint -q $dst) ]]; then
-        printf "\twarn: distination dir $dst is already mounted, skipping\n"
-    else
-        mount --bind $src $dst
-        printf "\tmounted\n"
-    fi
+    mount --bind $src $dst
+    printf "\t$(style green 'done')\n"
 }
+
 
 function sys_start()
 {
@@ -69,27 +158,33 @@ function sys_start()
     fi
 }
 
+function bind_dev()
+{
+    /sbin/busybox mount -o rbind /dev/ ./root-fs/dev
+    /sbin/busybox mount --make-rslave ./root-fs/dev
+}
+
+function unbind_dev()
+{
+    safe_umount ./root-fs/dev
+}
+
 function sys_start_lxc()
 {
     unset LD_PRELOAD
     chroot='chroot'
 
-    safe_bind_mount /dev ./root-fs/dev
+    bind_dev
     safe_bind_mount /sys ./root-fs/sys
 
     safe_bind_mount /storage/emulated/0/ ./root-fs/root/Storage
     safe_bind_mount /storage/emulated/0/Download ./root-fs/root/Downloads
     safe_bind_mount /storage/emulated/0/Pictures ./root-fs/root/Pictures
-    safe_bind_mount ./root-fs "./root-fs$(pwd)/root-fs"
     safe_bind_mount /data/data/com.termux/files/home/uoa ./root-fs/root/uoa
     safe_bind_mount /system/bin ./root-fs/system/bin
     safe_bind_mount /system/xbin ./root-fs/system/xbin
     safe_bind_mount /sbin ./root-fs/system/sbin
 
-    ## uncomment the following line to have access to the home directory of termux
-    #command+=" -b /data/data/com.termux/files/home:/root"
-    ## uncomment the following line to mount /sdcard directly to /
-    #command+=" -b /sdcard"
     command="$chroot ./root-fs "
     command+=" /usr/bin/env -i"
     command+=" HOME=/root"
@@ -109,19 +204,38 @@ function sys_start_lxc()
     sleep 5
 }
 
+
 function sys_stop()
 {
-    umount $(pwd)/root-fs/system/xbin
-    umount $(pwd)/root-fs/system/bin
-    umount $(pwd)/root-fs/system/sbin
-    umount $(pwd)/root-fs/proc
-    umount $(pwd)/root-fs/sys
-    umount $(pwd)/root-fs/dev/pts
-    umount $(pwd)/root-fs/$(pwd)/root-fs
-    umount $(pwd)/root-fs/root/uoa
-    umount $(pwd)/root-fs/dev
-    umount $(pwd)/root-fs/root/Storage
-    umount $(pwd)/root-fs/root/Downloads
-    umount $(pwd)/root-fs/root/Pictures
+    local rootfs_dir=$(realpath ./)
+    if [[ $# != 0 ]];then
+        rootfs_dir=$(realpath $1)
+    fi
+    log_i "stopping container at %s" $rootfs_dir
+    cd $rootfs_dir
+    safe_umount ./root-fs/system/xbin
+    safe_umount ./root-fs/system/bin
+    safe_umount ./root-fs/system/sbin
+    safe_umount ./root-fs/sys
+    safe_umount ./root-fs/proc
+    safe_umount ./root-fs/root/uoa
+    # mountpoint command is not reliable on root-fs/root/uoa, it always gives a wrong result
+    /sbin/busybox umount -l ./root-fs/root/uoa
+    safe_umount ./root-fs/root/Storage
+    safe_umount ./root-fs/root/Downloads
+    safe_umount ./root-fs/root/Pictures
+    safe_umount ./root-fs/root/.gvfs
+    unbind_dev
+    cd - > /dev/null
+    echo "1" > $script_dir/pipe1 &
+    last_pid=$!
+    sleep 2
+    ps --pid $last_pid &>/dev/null && kill -9 $last_pid
+    echo "system total mount items:$(mount | wc | awk '{print $1}')"
+
 }
 
+if [[ $# == 2 ]] && [[ $1 == 'stop' ]]; then
+    rootfs_dir=$2
+    sys_stop $rootfs_dir
+fi

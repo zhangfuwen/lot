@@ -42,9 +42,9 @@ function vnc_stop()
 {
     id=$1
 
-    vncserver -kill :$1
-    rm -rf /tmp/.X$1-lock
-    rm -rf /tmp/.X11-unix/X$1
+    vncserver -kill :$1 > /dev/null 2>&1
+    [[ -e /tmp/.X$1-lock ]] && rm -rf /tmp/.X$1-lock
+    [[ -e /tmp/.X11-unix/X$1 ]] && rm -rf /tmp/.X11-unix/X$1
 }
 
 
