@@ -5,7 +5,8 @@ to start, run:
 
 ```bash
 adb root
-adb shell su root /data/data/com.termux/files/home/uoa/daemon.sh /data/data/com.termux/files/home/debian/debian2/
+adb shell /data/data/com.termux/files/home/uoa/daemon.sh /data/data/com.termux/files/home/debian/debian3/
+adb shell /data/data/com.termux/files/home/uoa/sys.sh stop /data/data/com.termux/files/home/debian/debian3/
 ```
 
 to stop, run:
