@@ -5,6 +5,8 @@ function safe_bind_mount()
     src=$1
     dst=$2
 
+    umount $dst
+
     printf "mounting $src to $dst\n"
     if [[ ! -d $src ]]; then
         printf "\terror: source dir $src does not exist, skipping\n"
