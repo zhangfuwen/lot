@@ -123,26 +123,3 @@ function sys_stop()
     umount $(pwd)/root-fs/root/Pictures
 }
 
-if [[ $# == 1 ]]; then
-    # has opts
-    case $1 in
-    start ) op=start;;
-    stop ) op=stop;;
-    *) ;;
-    esac
-    echo "Selected command: $op"
-    echo "Selected number: $REPLY"
-
-    if [[ "$op" = "start" ]]; then
-        sys_start
-        exit 0
-    fi    
-    if [[ "$op" = "stop" ]]; then
-        sys_stop
-        exit 0
-    fi    
-    exit 0
-fi
-
-
-
