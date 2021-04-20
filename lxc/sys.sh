@@ -41,7 +41,7 @@ function sys_start()
     safe_bind_mount /storage/emulated/0/ $(pwd)/root-fs/root/Storage
     safe_bind_mount /storage/emulated/0/Download $(pwd)/root-fs/root/Downloads
     safe_bind_mount /storage/emulated/0/Pictures $(pwd)/root-fs/root/Pictures
-    safe_bind_mount ./root-fs "$(pwd)/root-fs$(pwd)/root-fs"
+    #safe_bind_mount $(pwd)/root-fs "$(pwd)/root-fs$(pwd)/root-fs"
     safe_bind_mount /data/data/com.termux/files/home/uoa $(pwd)/root-fs/root/uoa
     safe_bind_mount /system/bin $(pwd)/root-fs/system/bin
     safe_bind_mount /system/xbin $(pwd)/root-fs/system/xbin
@@ -72,39 +72,34 @@ function sys_start_lxc()
     unset LD_PRELOAD
     chroot='chroot'
 
-    safe_bind_mount /dev ./root-fs/dev
-    safe_bind_mount /sys ./root-fs/sys
-
-    safe_bind_mount /storage/emulated/0/ ./root-fs/root/Storage
-    safe_bind_mount /storage/emulated/0/Download ./root-fs/root/Downloads
-    safe_bind_mount /storage/emulated/0/Pictures ./root-fs/root/Pictures
-    safe_bind_mount ./root-fs "./root-fs$(pwd)/root-fs"
-    safe_bind_mount /data/data/com.termux/files/home/uoa ./root-fs/root/uoa
-    safe_bind_mount /system/bin ./root-fs/system/bin
-    safe_bind_mount /system/xbin ./root-fs/system/xbin
-    safe_bind_mount /sbin ./root-fs/system/sbin
+    safe_bind_mount /sys $(pwd)/root-fs/sys
+    safe_bind_mount /storage/emulated/0/ $(pwd)/root-fs/root/Storage
+    safe_bind_mount /storage/emulated/0/Download $(pwd)/root-fs/root/Downloads
+    safe_bind_mount /storage/emulated/0/Pictures $(pwd)/root-fs/root/Pictures
+    safe_bind_mount ./root-fs "$(pwd)/root-fs$(pwd)/root-fs"
+    safe_bind_mount /data/data/com.termux/files/home/uoa $(pwd)/root-fs/root/uoa
+    safe_bind_mount /system/bin $(pwd)/root-fs/system/bin
+    safe_bind_mount /system/xbin $(pwd)/root-fs/system/xbin
+    safe_bind_mount /sbin $(pwd)/root-fs/system/sbin
 
     ## uncomment the following line to have access to the home directory of termux
     #command+=" -b /data/data/com.termux/files/home:/root"
     ## uncomment the following line to mount /sdcard directly to /
     #command+=" -b /sdcard"
-    command="$chroot ./root-fs "
+    command="$chroot $(pwd)/root-fs "
     command+=" /usr/bin/env -i"
     command+=" HOME=/root"
     command+=" USER=root"
     command+=" PATH=/usr/local/sbin:/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin:/usr/games:/usr/local/games"
     command+=" TERM=$TERM"
     command+=" LANG=C.UTF-8"
-#    command+=" /bin/bash "
-   command+=" /bin/bash /root/uoa/unshare.sh"
+    command+=" /bin/bash --login"
     com="$@"
     if [ -z "$1" ];then
         exec $command
     else
         $command -c "$com"
     fi
-    echo "sleep 5 seconds"
-    sleep 5
 }
 
 function sys_stop()

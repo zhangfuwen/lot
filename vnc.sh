@@ -1,4 +1,4 @@
-#!bin/bash
+#!/usr/bin/bash
 function vnc_setup()
 {
     if [[ -d ~/.vnc ]]; then
@@ -48,43 +48,3 @@ function vnc_stop()
 }
 
 
-op=nothing
-
-# no opts
-if [[ $# == 0 ]]; then
-    PS3="command: "
-    select op in start, stop, setup, nothing 
-    do
-        break
-    done
-fi
-
-# has opts
-case $1 in
-    start ) op=start;;
-    stop ) 
-        op=stop
-        id=$2
-        ;;
-    setup ) op=setup;;
-    *)  op=nothing;;
-esac
-
-
-echo "Selected command: $op"
-echo "Selected number: $REPLY"
-
-if [[ "$op" = "start" ]]; then
-    vnc_start
-    exit 0
-fi    
-if [[ "$op" = "stop" ]]; then
-    vnc_stop $id
-    exit 0
-fi    
-
-if [[ "$op" = "setup" ]]; then
-    vnc_setup
-    exit 0
-fi    
-exit 0
