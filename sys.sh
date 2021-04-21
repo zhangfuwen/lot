@@ -171,6 +171,13 @@ function unbind_dev()
 
 function sys_start_lxc()
 {
+    local rootfs_dir=$(realpath ./)
+    if [[ $# != 0 ]];then
+        rootfs_dir=$(realpath $1)
+    fi
+    log_i "starting container at %s" $rootfs_dir
+    cd $rootfs_dir
+
     unset LD_PRELOAD
     chroot='chroot'
 
@@ -202,6 +209,7 @@ function sys_start_lxc()
     fi
     echo "sleep 5 seconds"
     sleep 5
+    cd - &> /dev/null
 }
 
 
@@ -230,7 +238,7 @@ function sys_stop()
     echo "1" > $script_dir/pipe1 &
     last_pid=$!
     sleep 2
-    ps --pid $last_pid &>/dev/null && kill -9 $last_pid
+    /system/bin/ps --pid $last_pid | grep $last_pid &>/dev/null && kill -9 $last_pid
     echo "system total mount items:$(mount | wc | awk '{print $1}')"
 
 }
@@ -238,4 +246,9 @@ function sys_stop()
 if [[ $# == 2 ]] && [[ $1 == 'stop' ]]; then
     rootfs_dir=$2
     sys_stop $rootfs_dir
+fi
+
+if [[ $# == 2 ]] && [[ $1 == 'start_lxc' ]]; then
+    rootfs_dir=$2
+    sys_start_lxc $rootfs_dir
 fi
