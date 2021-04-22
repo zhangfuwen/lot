@@ -12,7 +12,6 @@ int run_bash(void * args);
 
 int main()
 {
-
     int ret = chroot("./root-fs");
     if (ret < 0) {
         printf("failed to chroot, %s", strerror(errno));
@@ -20,8 +19,9 @@ int main()
     }
 
     static char child_stack[1048576];
-    pid_t child_pid = clone(run_bash, child_stack+1048576, CLONE_NEWPID | SIGCHLD, NULL);
+    pid_t child_pid = clone(run_bash, child_stack+1048576, CLONE_NEWPID | CLONE_NEWUSER | SIGCHLD, NULL);
     printf("clone() = %ld\n", (long)child_pid);
+    perror("clone error message");
     waitpid(child_pid, NULL, 0);
     return 0;
 }
