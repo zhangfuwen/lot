@@ -2,7 +2,6 @@
 #include <unistd.h>
 #include <errno.h>
 
-#define _GNU_SOURCE
 #include <sched.h>
 #include <sys/wait.h>
 #include <string.h>
@@ -28,15 +27,15 @@ int main()
 
 int run_bash(void * args)
 {
-  char *binaryPath = "/usr/bin/env";
-  char *arg1 = "-i";
-  char *arg2 = "HOME=/root";
-  char *arg3 = "USER=root";
-  char *arg4 = "PATH=/usr/local/sbin:/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin:/usr/games:/usr/local/games";
-  char *arg5 = "TERM=xterm-256color";
-  char *arg6 = "LANG=C.UTF-8";
-  char *arg7 = "/usr/bin/bash";
-  char *arg8 = "--login";
+  const char *binaryPath = "/usr/bin/env";
+  const char *arg1 = "-i";
+  const char *arg2 = "HOME=/root";
+  const char *arg3 = "USER=root";
+  const char *arg4 = "PATH=/usr/local/sbin:/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin:/usr/games:/usr/local/games";
+  const char *arg5 = "TERM=xterm-256color";
+  const char *arg6 = "LANG=C.UTF-8";
+  const char *arg7 = "/usr/bin/bash";
+  const char *arg8 = "--login";
   execl(binaryPath, binaryPath, 
           arg1, 
           arg2, 
